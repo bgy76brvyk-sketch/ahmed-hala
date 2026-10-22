@@ -120,7 +120,9 @@ body.locked{overflow:hidden;height:100%}
 .mbtn{display:inline-flex;align-items:center;gap:.6rem;margin-top:1.8rem;padding:.9rem 2.4rem;border:1px solid var(--gold);border-radius:999px;color:var(--gold);text-decoration:none;font-family:var(--latin);letter-spacing:.3em;text-transform:uppercase;font-size:.95rem;background:rgba(255,255,255,.4)}
 .mbtn:hover{background:var(--gold);color:#fff}
 .mbtn:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
-.foot{padding-block:2rem 5rem;color:var(--gold);font-size:1.3rem}
+.foot{padding-block:2rem 6rem;color:var(--gold);font-size:1.3rem}
+.foot .lat{margin-top:.2rem;font-size:.8rem}
+.signed{font-family:var(--arabic);font-weight:700;font-size:3rem;line-height:1.5;color:var(--gold);margin-top:.2rem}
 
 /* ---------- petals + music ---------- */
 #petals{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:30}
@@ -236,7 +238,13 @@ body.go .rv{animation:rise 1s both}
     </div>
   </section>
 
-  <div class="pad foot"><div class="col">بحضوركم تكتمل فرحتنا</div></div>
+  <div class="pad foot">
+    <div class="col">
+      <div>بحضوركم تكتمل فرحتنا</div>
+      <div class="orn sm"><svg viewBox="0 0 24 24"><path d="M12 1l2.2 7.8L22 12l-7.8 2.2L12 23l-2.2-8.8L2 12l7.8-3.2z" fill="currentColor"/></svg></div>
+      <div class="signed">العطبراوي</div>
+    </div>
+  </div>
 </main>
 
 <script>
@@ -320,7 +328,27 @@ var CONFIG={
     window.scrollTo(0,0);
     btn.classList.add("on");
     audio.play().catch(function(){dim()});
+    autoScroll();
   });
+
+  /* gentle auto-scroll; stops as soon as the guest touches or scrolls */
+  function autoScroll(){
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    var active=true,last=null,pos=window.scrollY;
+    function stop(){active=false}
+    ["wheel","touchstart","mousedown","keydown"].forEach(function(ev){window.addEventListener(ev,stop,{passive:true,once:true})});
+    function step(t){
+      if(!active)return;
+      if(last===null)last=t;
+      var dt=Math.min(t-last,50);last=t;
+      pos+=dt*0.045; /* about 45 pixels per second */
+      var max=document.documentElement.scrollHeight-window.innerHeight;
+      if(pos>=max){window.scrollTo(0,max);return}
+      window.scrollTo(0,pos);
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
 })();
 </script>
 </body>
